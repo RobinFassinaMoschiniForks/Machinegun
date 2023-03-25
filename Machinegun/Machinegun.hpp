@@ -33,8 +33,13 @@ enum MachineGunResult {
 
 extern "C" PVOID MACHINEGUN_EXECUTE(PVOID machineGunPkg);
 
-void SetArgs(int numberOfArgs, ...) {
+MachineGunResult SetArgs(int numberOfArgs, ...) {
 	va_list args;
+
+	if (numberOfArgs > MAX_ARGS || numberOfArgs < 0)
+		return INVALID_ARGS_NUMBER;
+	numberOfArgs++;
+
 	va_start(args, numberOfArgs);
 	PVOID* argsArr = va_arg(args, PVOID*);
 
@@ -43,10 +48,12 @@ void SetArgs(int numberOfArgs, ...) {
 	}
 
 	va_end(args);
+	return SUCCESS;
 }
 
 MachineGunResult MachineGun(int numberOfArgs, PVOID* machineGunResult, std::wstring moduleName, std::string functionName, PVOID args[MAX_ARGS]) {
 	MachineGunPkg machineGunPkg{};
+	PVOID* machineGunPkgArg = NULL;
 
 	if (numberOfArgs > MAX_ARGS || numberOfArgs < 0)
 		return INVALID_ARGS_NUMBER;
@@ -54,6 +61,7 @@ MachineGunResult MachineGun(int numberOfArgs, PVOID* machineGunResult, std::wstr
 	// Getting the function.
 	if (moduleName.empty())
 		return MODULE_NOT_FOUND;
+
 	HMODULE hModule = GetModuleHandle(moduleName.c_str());
 
 	if (!hModule) {
@@ -72,53 +80,12 @@ MachineGunResult MachineGun(int numberOfArgs, PVOID* machineGunResult, std::wstr
 	machineGunPkg.Function = functionAddress;
 
 	// Loading the arguments.
-	if (numberOfArgs > 0) {
-		machineGunPkg.Arg1 = args[0];
-
-		if (numberOfArgs > 1) {
-			machineGunPkg.Arg2 = args[1];
-
-			if (numberOfArgs > 2) {
-				machineGunPkg.Arg3 = args[2];
-
-				if (numberOfArgs > 3) {
-					machineGunPkg.Arg4 = args[3];
-
-					if (numberOfArgs > 4) {
-						machineGunPkg.Arg5 = args[4];
-
-						if (numberOfArgs > 5) {
-							machineGunPkg.Arg6 = args[5];
-
-							if (numberOfArgs > 6) {
-								machineGunPkg.Arg7 = args[6];
-
-								if (numberOfArgs > 7) {
-									machineGunPkg.Arg8 = args[7];
-
-									if (numberOfArgs > 8) {
-										machineGunPkg.Arg9 = args[8];
-
-										if (numberOfArgs > 9) {
-											machineGunPkg.Arg10 = args[9];
-
-											if (numberOfArgs > 10) {
-												machineGunPkg.Arg11 = args[10];
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+	for (int i = 0; i < numberOfArgs; i++) {
+		machineGunPkgArg = &((PVOID*)&machineGunPkg)[i + 2];
+		*machineGunPkgArg = args[i];
 	}
 
 	*machineGunResult = MACHINEGUN_EXECUTE(&machineGunPkg);
-
-Exit:
 	return SUCCESS;
 }
 
