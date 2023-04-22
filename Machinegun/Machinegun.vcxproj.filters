@@ -28,7 +28,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="gen_exec.asm">
+    <MASM Include="MachineGunExec.asm">
       <Filter>Source Files</Filter>
     </MASM>
   </ItemGroup>

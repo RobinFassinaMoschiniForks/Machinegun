@@ -53,6 +53,7 @@ MachineGunResult SetArgs(int numberOfArgs, ...) {
 
 MachineGunResult MachineGun(int numberOfArgs, PVOID* machineGunResult, std::wstring moduleName, std::string functionName, PVOID args[MAX_ARGS]) {
 	MachineGunPkg machineGunPkg{};
+	bool unloadDll = false;
 	PVOID* machineGunPkgArg = NULL;
 
 	if (numberOfArgs > MAX_ARGS || numberOfArgs < 0)
@@ -65,6 +66,7 @@ MachineGunResult MachineGun(int numberOfArgs, PVOID* machineGunResult, std::wstr
 	HMODULE hModule = GetModuleHandle(moduleName.c_str());
 
 	if (!hModule) {
+		unloadDll = true;
 		hModule = LoadLibrary(moduleName.c_str());
 
 		if (!hModule)
@@ -73,8 +75,11 @@ MachineGunResult MachineGun(int numberOfArgs, PVOID* machineGunResult, std::wstr
 
 	PVOID functionAddress = GetProcAddress(hModule, functionName.c_str());
 
-	if (!functionAddress)
+	if (!functionAddress) {
+		if (unloadDll)
+			FreeLibrary(hModule);
 		return FUNCTION_NOT_FOUND;
+	}
 
 	machineGunPkg.NumberOfArgs = reinterpret_cast<PVOID>(numberOfArgs);
 	machineGunPkg.Function = functionAddress;
@@ -85,7 +90,16 @@ MachineGunResult MachineGun(int numberOfArgs, PVOID* machineGunResult, std::wstr
 		*machineGunPkgArg = args[i];
 	}
 
-	*machineGunResult = MACHINEGUN_EXECUTE(&machineGunPkg);
+	try {
+		*machineGunResult = MACHINEGUN_EXECUTE(&machineGunPkg);
+	}
+	catch (std::exception e) {
+		*machineGunResult = (PVOID)e.what();
+	}
+
+	if (unloadDll)
+		FreeLibrary(hModule);
+
 	return SUCCESS;
 }
 
