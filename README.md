@@ -2,16 +2,13 @@
 
 ![c++](https://img.shields.io/badge/C%2B%2B-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white) ![assembly](https://img.shields.io/badge/ASSEMBLY-ED8B00?style=for-the-badge&logo=Assembly&logoColor=white) ![windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 
+## This project was co-authored by
+
+[![idov31](https://img.shields.io/badge/Idov31-FF1B2D?style=for-the-badge&logo=Idov31&logoColor=white)](https://github.com/idov31) [![trickster0](https://img.shields.io/badge/TRICKSTER0-2D9D96?style=for-the-badge&logo=TRICKSTER0&logoColor=white)](https://github.com/trickster0)
+
 Machinegun is an advanced version of Metasploit's [railgun](https://docs.metasploit.com/docs/development/developing-modules/libraries/how-to-use-railgun-for-windows-post-exploitation.html).
 
 Machinegun is capable of reliably running arbitrary Windows API functions on a remote computer and getting the results to the attacker's machine.
-
-The project is still in its early stage and for it to be complete I need to implement:
-
-- [ ] Organized API to work with.
-- [ ] Stack to contain the variables.
-- [ ] Proper exception handling.
-- [ ] Support cross-compiling.
 
 ## Setup
 
